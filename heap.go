@@ -34,8 +34,8 @@ func (heap *Heap) Insert(value int) {
 func (heap *Heap) upHeapify(startNode int) {
 	for node := startNode; node != 0; node = parent(node) {
 		parent := parent(node)
-		if heap.comparator(heap.values[node], heap.values[parent]) {
-			heap.values[parent], heap.values[node] = heap.values[node], heap.values[parent]
+		if heap.compare(node, parent) {
+			heap.swap(node, parent)
 		}
 	}
 }
@@ -48,7 +48,7 @@ func (heap *Heap) ExtractTop() (int, bool) {
 		return 0, false
 	}
 	top := heap.values[0]
-	heap.values[0], heap.values[heap.last-1] = heap.values[heap.last-1], heap.values[0]
+	heap.swap(0, heap.last-1)
 	heap.last--
 	heap.heapify(0)
 	return top, true
@@ -66,15 +66,15 @@ func (heap *Heap) heapify(node int) {
 	
 	better := left
 	if left < heap.last && right < heap.last {
-		if heap.comparator(heap.values[right], heap.values[left]) {
+		if heap.compare(right, left) {
 			better = right
 		}
 	} else if right < heap.last {
 		better = right
 	}
 	
-	if heap.comparator(heap.values[better], heap.values[node]) {	
-		heap.values[node], heap.values[better] = heap.values[better], heap.values[node]
+	if heap.compare(better, node) {	
+		heap.swap(node, better)
 	}
 	heap.heapify(better)
 }
@@ -87,6 +87,14 @@ func (heap *Heap) Empty() bool {
 		return true
 	}
 	return false
+}
+
+func (heap *Heap) compare(node, otherNode int) bool {
+	return heap.comparator(heap.values[node], heap.values[otherNode])
+}
+
+func (heap *Heap) swap(node, otherNode int) {
+	heap.values[node], heap.values[otherNode] = heap.values[otherNode], heap.values[node]
 }
 
 // helper functions below
