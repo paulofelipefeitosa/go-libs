@@ -1,3 +1,5 @@
+package queue
+
 type QueueNode struct {
     Value int
     Next *QueueNode
